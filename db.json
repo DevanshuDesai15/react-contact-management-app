@@ -1,0 +1,34 @@
+{
+  "contacts": [
+    {
+      "id": "99157169-108e-4a58-968f-46be090113a8",
+      "name": "Diana",
+      "email": "price@wonder.lasso"
+    },
+    {
+      "id": "a2dd62d0-3644-4ae5-a925-eacaed4e64a5",
+      "name": "Peter",
+      "email": "parker@spidy.web"
+    },
+    {
+      "id": "566aad81-d3fc-4797-bf82-6e1080b0a6bc",
+      "name": "Tony",
+      "email": "stark@iron.arc"
+    },
+    {
+      "id": "049e2ea5-21b9-4dc1-817a-ccecb3d701e6",
+      "name": "Tornado",
+      "email": "red@torr.bot"
+    },
+    {
+      "id": "4ad3d29a-31f7-4c7f-9efc-930d08ebfac3",
+      "name": "Clark",
+      "email": "kent@sups.cape"
+    },
+    {
+      "id": "74eaa0cf-648b-4ce4-af87-724694e662ba",
+      "name": "Hal",
+      "email": "jordan@lantern.green"
+    }
+  ]
+}
