@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes, Navigate} from 'react-router-dom';
 import './App.css';
 import { v4 as uuid } from 'uuid';
 import Header from './Header';
@@ -8,6 +8,10 @@ import ContactList from './ContactList';
 import ContactDetail from './ContactDetail';
 import api from "../api/contacts";
 import EditContact from './EditContact';
+import Login from './Login';
+import Register from './Register';
+import ProtectedRoute from './ProtectedRoute';
+import { AuthProvider } from '../contexts/AuthContext';
 
 // USED SEMENTIC UI FOR THIS APPLICATION
 
@@ -34,11 +38,7 @@ function App() {
 
   const addContactHandler = async (contact) => {
     console.log(contact);
-    const request ={
-      id : uuid(), 
-      ...contact
-    }
-    const response = await api.post("/contacts", request)
+    const response = await api.post("/contacts", contact)
     setContacts([...contacts, response.data]);
   };
 
@@ -101,28 +101,45 @@ function App() {
   }, [contacts])
   
   return (
-    <div className='ui container'>
-      <Router>
-        <Header />
-        <Routes>
-        <Route path="/" 
-        element={<ContactList contacts={SearchTerm.length < 1 ? contacts : SearchResults} getContactId={removeContactHandler} term={SearchTerm} searchKeyword={searchHandler}/>}
-        //render={(props)=><ContactList contacts={contacts} getContactId={removeContactHandler} {...props} />}
-        />
-        <Route path="/add" 
-        element={<AddContact addContactHandler={addContactHandler}/>}
-        //render={(props)=><AddContact {...props} addContactHandler={addContactHandler}/>}
-        />
-        <Route path="/edit" 
-        element={<EditContact updateContactHandler={updateContactHandler}/>}
-        />
-        <Route path="/contact/:id" element={<ContactDetail/>}/>
-        </Routes>
-        {/* <AddContact addContactHandler={addContactHandler}/> */}
-        {/*Here in contact list props are used to get the values in the above contact array*/}
-        {/* <ContactList contacts={contacts} getContactId={removeContactHandler}/> */}
-      </Router>
-    </div>
+    <AuthProvider>
+      <div className='ui container'>
+        <Router>
+          <Header />
+          <div style={{ marginTop: '70px' }}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <ContactList 
+                    contacts={SearchTerm.length < 1 ? contacts : SearchResults} 
+                    getContactId={removeContactHandler} 
+                    term={SearchTerm} 
+                    searchKeyword={searchHandler}
+                  />
+                </ProtectedRoute>
+              } />
+              <Route path="/add" element={
+                <ProtectedRoute>
+                  <AddContact addContactHandler={addContactHandler}/>
+                </ProtectedRoute>
+              } />
+              <Route path="/edit" element={
+                <ProtectedRoute>
+                  <EditContact updateContactHandler={updateContactHandler}/>
+                </ProtectedRoute>
+              } />
+              <Route path="/contact/:id" element={
+                <ProtectedRoute>
+                  <ContactDetail/>
+                </ProtectedRoute>
+              } />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
+        </Router>
+      </div>
+    </AuthProvider>
   );
 }
 
