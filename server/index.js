@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const { Contact } = require('./models');
+const { User, Contact } = require('./models');
+const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3007;
@@ -10,9 +12,84 @@ const PORT = process.env.PORT || 3007;
 app.use(cors());
 app.use(express.json());
 
-app.get('/contacts', async (req, res) => {
+app.post('/auth/register', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Username, email, and password are required' });
+    }
+    
+    const existingUser = await User.findOne({
+      where: {
+        [require('sequelize').Op.or]: [
+          { username },
+          { email }
+        ]
+      }
+    });
+    
+    if (existingUser) {
+      return res.status(400).json({ error: 'Username or email already exists' });
+    }
+    
+    const user = await User.create({
+      username,
+      email,
+      password
+    });
+    
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    
+    res.status(201).json({
+      message: 'User created successfully',
+      user,
+      token
+    });
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ error: 'Validation error', details: error.errors });
+    }
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+});
+
+app.post('/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+    
+    const user = await User.findOne({ where: { email } });
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const isValidPassword = await user.validatePassword(password);
+    
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    
+    res.json({
+      message: 'Login successful',
+      user,
+      token
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+app.get('/contacts', authenticateToken, async (req, res) => {
   try {
     const contacts = await Contact.findAll({
+      where: { userId: req.user.id },
       order: [['created_at', 'DESC']]
     });
     res.json(contacts);
@@ -21,7 +98,7 @@ app.get('/contacts', async (req, res) => {
   }
 });
 
-app.post('/contacts', async (req, res) => {
+app.post('/contacts', authenticateToken, async (req, res) => {
   try {
     const { name, email } = req.body;
     
@@ -31,7 +108,8 @@ app.post('/contacts', async (req, res) => {
     
     const contact = await Contact.create({
       name,
-      email
+      email,
+      userId: req.user.id
     });
     
     res.status(201).json(contact);
@@ -43,7 +121,7 @@ app.post('/contacts', async (req, res) => {
   }
 });
 
-app.put('/contacts/:id', async (req, res) => {
+app.put('/contacts/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email } = req.body;
@@ -52,7 +130,9 @@ app.put('/contacts/:id', async (req, res) => {
       return res.status(400).json({ error: 'Name and email are required' });
     }
     
-    const contact = await Contact.findByPk(id);
+    const contact = await Contact.findOne({
+      where: { id, userId: req.user.id }
+    });
     
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });
@@ -72,11 +152,13 @@ app.put('/contacts/:id', async (req, res) => {
   }
 });
 
-app.delete('/contacts/:id', async (req, res) => {
+app.delete('/contacts/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     
-    const contact = await Contact.findByPk(id);
+    const contact = await Contact.findOne({
+      where: { id, userId: req.user.id }
+    });
     
     if (!contact) {
       return res.status(404).json({ error: 'Contact not found' });

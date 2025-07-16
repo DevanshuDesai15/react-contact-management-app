@@ -23,6 +23,16 @@ const Contact = sequelize.define('Contact', {
       notEmpty: true,
       isEmail: true
     }
+  },
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   }
 }, {
   tableName: 'contacts',
