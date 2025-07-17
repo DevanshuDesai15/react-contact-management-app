@@ -11,26 +11,12 @@ import EditContact from './EditContact';
 import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
-import { AuthProvider } from '../contexts/AuthContext';
+import { AuthProvider, useAuth } from '../contexts/AuthContext';
 
 // USED SEMENTIC UI FOR THIS APPLICATION
 
-function App() {
-  
-  // const contacts=[
-  //   {
-  //     id: "1",
-  //     "name": "Devanshu",
-  //     "email": "devanshu@gmail.com"
-  //   },
-  //   {
-  //     id: "2",
-  //     "name": "Shreyan",
-  //     "email": "shreyan@gmail.com"
-  //   }
-  // ]
-
-  // NOW WITH THE USE OF HOOKS WE WILL GET THE CONTACTS
+function MainApp() {
+  const { isAuthenticated, loading } = useAuth();
   const LOCAL_STORAGE_KEY="contacts"
   const [contacts, setContacts] = useState([]);
   const [SearchTerm, setSearchTerm] = useState("");
@@ -69,7 +55,6 @@ function App() {
 
   // SEARCH
   const searchHandler = (SearchTerm)=>{
-    //console.log(SearchTerm);
     setSearchTerm(SearchTerm);
     if(SearchTerm !== ""){
       const newContactList = contacts.filter((contact)=>{
@@ -78,67 +63,77 @@ function App() {
       setSearchResults(newContactList)
     }
     else{
-      setSearchResults(contacts);
+      setSearchResults([]);
     }
   }
 
-  // WE WILL USE HERE useEffect SO THAT WE CAN STORE THE DATA INSIDE THE LOCAL STORAGE DUE TO THAT DATA 
-  // WE ADDED IN LIST WON'T DISAPPEAR 
-  
+  // FETCH CONTACTS ONLY WHEN AUTHENTICATED
   useEffect(() => {
-    // const retriveContacts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    // if (retriveContacts) setContacts(retriveContacts);
-    const getAllContacts = async () => {
-      const allContacts = await retriveContacts();
-      if(allContacts) setContacts(allContacts);
+    if (isAuthenticated && !loading) {
+      const getAllContacts = async () => {
+        try {
+          const allContacts = await retriveContacts();
+          if(allContacts) setContacts(allContacts);
+        } catch (error) {
+          console.error('Error fetching contacts:', error);
+        }
+      }
+      getAllContacts();
     }
-    getAllContacts();
-}, [])
+  }, [isAuthenticated, loading])
   
   // FOR STORING THE DATA
   useEffect(() => {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts))
+      if (contacts.length > 0) {
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts))
+      }
   }, [contacts])
   
   return (
+    <div className='ui container'>
+      <Router>
+        <Header />
+        <div style={{ marginTop: '70px' }}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={
+              <ProtectedRoute>
+                <ContactList 
+                  contacts={SearchTerm.length < 1 ? contacts : SearchResults} 
+                  getContactId={removeContactHandler} 
+                  term={SearchTerm} 
+                  searchKeyword={searchHandler}
+                />
+              </ProtectedRoute>
+            } />
+            <Route path="/add" element={
+              <ProtectedRoute>
+                <AddContact addContactHandler={addContactHandler}/>
+              </ProtectedRoute>
+            } />
+            <Route path="/edit" element={
+              <ProtectedRoute>
+                <EditContact updateContactHandler={updateContactHandler}/>
+              </ProtectedRoute>
+            } />
+            <Route path="/contact/:id" element={
+              <ProtectedRoute>
+                <ContactDetail/>
+              </ProtectedRoute>
+            } />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+      </Router>
+    </div>
+  );
+}
+
+function App() {
+  return (
     <AuthProvider>
-      <div className='ui container'>
-        <Router>
-          <Header />
-          <div style={{ marginTop: '70px' }}>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <ContactList 
-                    contacts={SearchTerm.length < 1 ? contacts : SearchResults} 
-                    getContactId={removeContactHandler} 
-                    term={SearchTerm} 
-                    searchKeyword={searchHandler}
-                  />
-                </ProtectedRoute>
-              } />
-              <Route path="/add" element={
-                <ProtectedRoute>
-                  <AddContact addContactHandler={addContactHandler}/>
-                </ProtectedRoute>
-              } />
-              <Route path="/edit" element={
-                <ProtectedRoute>
-                  <EditContact updateContactHandler={updateContactHandler}/>
-                </ProtectedRoute>
-              } />
-              <Route path="/contact/:id" element={
-                <ProtectedRoute>
-                  <ContactDetail/>
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={<Navigate to="/" />} />
-            </Routes>
-          </div>
-        </Router>
-      </div>
+      <MainApp />
     </AuthProvider>
   );
 }
