@@ -1,12 +1,13 @@
 import axios from 'axios';
+// Removed TypeScript types for now
 
 const api = axios.create({
-    baseURL:"http://localhost:3007/",
+    baseURL: "http://localhost:3007/",
 });
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && config.headers) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

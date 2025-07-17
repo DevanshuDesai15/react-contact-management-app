@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+// Removed TypeScript types for now
 
-const Register = () => {
-    const [userData, setUserData] = useState({
-        username: '',
+const Login = () => {
+    const [credentials, setCredentials] = useState({
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     
-    const { register } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setUserData({
-            ...userData,
+        setCredentials({
+            ...credentials,
             [e.target.name]: e.target.value
         });
     };
@@ -27,34 +26,18 @@ const Register = () => {
         setError('');
         setLoading(true);
 
-        if (!userData.username || !userData.email || !userData.password || !userData.confirmPassword) {
+        if (!credentials.email || !credentials.password) {
             setError('Please fill in all fields');
             setLoading(false);
             return;
         }
 
-        if (userData.password !== userData.confirmPassword) {
-            setError('Passwords do not match');
-            setLoading(false);
-            return;
-        }
-
-        if (userData.password.length < 6) {
-            setError('Password must be at least 6 characters long');
-            setLoading(false);
-            return;
-        }
-
-        const result = await register({
-            username: userData.username,
-            email: userData.email,
-            password: userData.password
-        });
+        const result = await login(credentials);
         
         if (result.success) {
             navigate('/');
         } else {
-            setError(result.error);
+            setError(result.error || 'Login failed');
         }
         
         setLoading(false);
@@ -66,31 +49,17 @@ const Register = () => {
                 <div className="column" style={{ maxWidth: '450px' }}>
                     <h2 className="ui teal image header">
                         <div className="content">
-                            Create your account
+                            Log-in to your account
                         </div>
                     </h2>
                     <form className="ui large form" onSubmit={handleSubmit}>
                         <div className="ui stacked segment">
                             {error && (
                                 <div className="ui error message">
-                                    <div className="header">Registration Failed</div>
+                                    <div className="header">Login Failed</div>
                                     <p>{error}</p>
                                 </div>
                             )}
-                            
-                            <div className="field">
-                                <div className="ui left icon input">
-                                    <i className="user icon"></i>
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        placeholder="Username"
-                                        value={userData.username}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
                             
                             <div className="field">
                                 <div className="ui left icon input">
@@ -99,7 +68,7 @@ const Register = () => {
                                         type="email"
                                         name="email"
                                         placeholder="Email address"
-                                        value={userData.email}
+                                        value={credentials.email}
                                         onChange={handleChange}
                                         required
                                     />
@@ -113,21 +82,7 @@ const Register = () => {
                                         type="password"
                                         name="password"
                                         placeholder="Password"
-                                        value={userData.password}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            
-                            <div className="field">
-                                <div className="ui left icon input">
-                                    <i className="lock icon"></i>
-                                    <input
-                                        type="password"
-                                        name="confirmPassword"
-                                        placeholder="Confirm Password"
-                                        value={userData.confirmPassword}
+                                        value={credentials.password}
                                         onChange={handleChange}
                                         required
                                     />
@@ -139,13 +94,13 @@ const Register = () => {
                                 type="submit"
                                 disabled={loading}
                             >
-                                Register
+                                Login
                             </button>
                         </div>
                     </form>
                     
                     <div className="ui message">
-                        Already have an account? <Link to="/login">Sign In</Link>
+                        New to us? <Link to="/register">Sign Up</Link>
                     </div>
                 </div>
             </div>
@@ -153,4 +108,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default Login;

@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { authAPI } from '../api/contacts';
+// Removed TypeScript types for now
 
-const AuthContext = createContext();
+const AuthContext = createContext(undefined);
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
