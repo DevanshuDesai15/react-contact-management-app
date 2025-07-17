@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import './App.css';
+import { Box, Container } from '@mui/material';
 import Header from './Header';
 import AddContact from './AddContact'
 import ContactList from './ContactList';
@@ -11,7 +11,6 @@ import Login from './Login';
 import Register from './Register';
 import ProtectedRoute from './ProtectedRoute';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
-// Removed TypeScript types for now
 
 function MainApp() {
   const { isAuthenticated, loading } = useAuth();
@@ -28,7 +27,7 @@ function MainApp() {
 
   const updateContactHandler = async (contact) => {
     const response = await api.put(`/contacts/${contact.id}`, contact);
-    setContacts(contacts.map(existingContact => 
+    setContacts(contacts.map(existingContact =>
       existingContact.id === contact.id ? response.data : existingContact
     ));
   };
@@ -69,51 +68,51 @@ function MainApp() {
       getAllContacts();
     }
   }, [isAuthenticated, loading]);
-  
+
   useEffect(() => {
     if (contacts.length > 0) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
     }
   }, [contacts]);
-  
+
   return (
-    <div className='ui container'>
+    <Box className="min-h-screen gradient-bg">
       <Router>
         <Header />
-        <div style={{ marginTop: '70px' }}>
+        <Container maxWidth="lg" className="pt-24 pb-8">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={
               <ProtectedRoute>
-                <ContactList 
-                  contacts={searchTerm.length < 1 ? contacts : searchResults} 
-                  getContactId={removeContactHandler} 
-                  term={searchTerm} 
+                <ContactList
+                  contacts={searchTerm.length < 1 ? contacts : searchResults}
+                  getContactId={removeContactHandler}
+                  term={searchTerm}
                   searchKeyword={searchHandler}
                 />
               </ProtectedRoute>
             } />
             <Route path="/add" element={
               <ProtectedRoute>
-                <AddContact addContactHandler={addContactHandler}/>
+                <AddContact addContactHandler={addContactHandler} />
               </ProtectedRoute>
             } />
             <Route path="/edit" element={
               <ProtectedRoute>
-                <EditContact updateContactHandler={updateContactHandler}/>
+                <EditContact updateContactHandler={updateContactHandler} />
               </ProtectedRoute>
             } />
             <Route path="/contact/:id" element={
               <ProtectedRoute>
-                <ContactDetail/>
+                <ContactDetail />
               </ProtectedRoute>
             } />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-        </div>
+        </Container>
       </Router>
-    </div>
+    </Box>
   );
 }
 
