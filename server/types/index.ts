@@ -1,9 +1,16 @@
+import { Request } from 'express';
+
 export interface IUser {
   id: string;
+  username: string;
   email: string;
   password: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IUserMethods {
+  validatePassword: (password: string) => Promise<boolean>;
 }
 
 export interface IContact {
@@ -15,7 +22,7 @@ export interface IContact {
   updatedAt: Date;
 }
 
-export interface AuthRequest extends Request {
+export interface AuthRequest<P = any, ResBody = any, ReqBody = any> extends Request<P, ResBody, ReqBody> {
   user?: IUser;
 }
 
@@ -35,12 +42,13 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
+  username: string;
   email: string;
   password: string;
-  name?: string;
 }
 
 export interface JwtPayload {
   userId: string;
-  email: string;
+  iat?: number;
+  exp?: number;
 }

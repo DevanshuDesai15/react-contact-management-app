@@ -1,7 +1,8 @@
-const sequelize = require('../config/database');
-const User = require('./User');
-const Contact = require('./Contact');
+import sequelize from '../config/database';
+import User from './User';
+import Contact from './Contact';
 
+// Define associations
 User.hasMany(Contact, {
   foreignKey: 'userId',
   as: 'contacts',
@@ -19,4 +20,5 @@ const db = {
   Contact
 };
 
-module.exports = db;
+export { sequelize, User, Contact };
+export default db; 
