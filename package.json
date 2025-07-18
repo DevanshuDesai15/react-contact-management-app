@@ -17,7 +17,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.2.1",
-    "util": "^0.12.4",
+    "util": "^0.12.5",
     "uuidv4": "^6.2.12",
     "web-vitals": "^5.0.3"
   },
