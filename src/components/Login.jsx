@@ -12,6 +12,7 @@ import {
     IconButton,
     CircularProgress,
     Divider,
+    Stack,
 } from '@mui/material';
 import {
     Email,
@@ -104,83 +105,85 @@ const Login = () => {
                             </Alert>
                         )}
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <TextField
-                                fullWidth
-                                label="Email Address"
-                                name="email"
-                                type="email"
-                                value={credentials.email}
-                                onChange={handleChange}
-                                required
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Email color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                    }
-                                }}
-                            />
+                        <form onSubmit={handleSubmit}>
+                            <Stack spacing={3}>
+                                <TextField
+                                    fullWidth
+                                    label="Email Address"
+                                    name="email"
+                                    type="email"
+                                    value={credentials.email}
+                                    onChange={handleChange}
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Email color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                        }
+                                    }}
+                                />
 
-                            <TextField
-                                fullWidth
-                                label="Password"
-                                name="password"
-                                type={showPassword ? 'text' : 'password'}
-                                value={credentials.password}
-                                onChange={handleChange}
-                                required
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Lock color="action" />
-                                        </InputAdornment>
-                                    ),
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label="toggle password visibility"
-                                                onClick={togglePasswordVisibility}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                    }
-                                }}
-                            />
+                                <TextField
+                                    fullWidth
+                                    label="Password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={credentials.password}
+                                    onChange={handleChange}
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Lock color="action" />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={togglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                        }
+                                    }}
+                                />
 
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                size="large"
-                                disabled={loading}
-                                startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
-                                sx={{
-                                    background: 'linear-gradient(135deg, #0ea5e9 0%, #d946ef 100%)',
-                                    borderRadius: 2,
-                                    py: 1.5,
-                                    textTransform: 'none',
-                                    fontSize: '1rem',
-                                    fontWeight: 600,
-                                    '&:hover': {
-                                        background: 'linear-gradient(135deg, #0284c7 0%, #c026d3 100%)',
-                                    }
-                                }}
-                            >
-                                {loading ? 'Signing In...' : 'Sign In'}
-                            </Button>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    disabled={loading}
+                                    startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #0ea5e9 0%, #d946ef 100%)',
+                                        borderRadius: 2,
+                                        py: 1.5,
+                                        textTransform: 'none',
+                                        fontSize: '1rem',
+                                        fontWeight: 600,
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #0284c7 0%, #c026d3 100%)',
+                                        }
+                                    }}
+                                >
+                                    {loading ? 'Signing In...' : 'Sign In'}
+                                </Button>
+                            </Stack>
                         </form>
 
                         <Divider sx={{ my: 3 }}>

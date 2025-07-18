@@ -12,6 +12,7 @@ import {
     IconButton,
     CircularProgress,
     Divider,
+    Stack,
 } from '@mui/material';
 import {
     Person,
@@ -112,106 +113,108 @@ const Register = () => {
                             </Alert>
                         )}
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <TextField
-                                fullWidth
-                                label="Username"
-                                name="username"
-                                type="text"
-                                value={userData.username}
-                                onChange={handleChange}
-                                required
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Person color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                    }
-                                }}
-                            />
+                        <form onSubmit={handleSubmit}>
+                            <Stack spacing={3}>
+                                <TextField
+                                    fullWidth
+                                    label="Username"
+                                    name="username"
+                                    type="text"
+                                    value={userData.username}
+                                    onChange={handleChange}
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Person color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                        }
+                                    }}
+                                />
 
-                            <TextField
-                                fullWidth
-                                label="Email Address"
-                                name="email"
-                                type="email"
-                                value={userData.email}
-                                onChange={handleChange}
-                                required
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Email color="action" />
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                    }
-                                }}
-                            />
+                                <TextField
+                                    fullWidth
+                                    label="Email Address"
+                                    name="email"
+                                    type="email"
+                                    value={userData.email}
+                                    onChange={handleChange}
+                                    required
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Email color="action" />
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                        }
+                                    }}
+                                />
 
-                            <TextField
-                                fullWidth
-                                label="Password"
-                                name="password"
-                                type={showPassword ? 'text' : 'password'}
-                                value={userData.password}
-                                onChange={handleChange}
-                                required
-                                helperText="Password must be at least 6 characters long"
-                                InputProps={{
-                                    startAdornment: (
-                                        <InputAdornment position="start">
-                                            <Lock color="action" />
-                                        </InputAdornment>
-                                    ),
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <IconButton
-                                                aria-label="toggle password visibility"
-                                                onClick={togglePasswordVisibility}
-                                                edge="end"
-                                            >
-                                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                }}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                    }
-                                }}
-                            />
+                                <TextField
+                                    fullWidth
+                                    label="Password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={userData.password}
+                                    onChange={handleChange}
+                                    required
+                                    helperText="Password must be at least 6 characters long"
+                                    InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Lock color="action" />
+                                            </InputAdornment>
+                                        ),
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={togglePasswordVisibility}
+                                                    edge="end"
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        ),
+                                    }}
+                                    sx={{
+                                        '& .MuiOutlinedInput-root': {
+                                            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                        }
+                                    }}
+                                />
 
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                size="large"
-                                disabled={loading}
-                                startIcon={loading ? <CircularProgress size={20} /> : <PersonAdd />}
-                                sx={{
-                                    background: 'linear-gradient(135deg, #d946ef 0%, #0ea5e9 100%)',
-                                    borderRadius: 2,
-                                    py: 1.5,
-                                    textTransform: 'none',
-                                    fontSize: '1rem',
-                                    fontWeight: 600,
-                                    '&:hover': {
-                                        background: 'linear-gradient(135deg, #c026d3 0%, #0284c7 100%)',
-                                    }
-                                }}
-                            >
-                                {loading ? 'Creating Account...' : 'Create Account'}
-                            </Button>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    size="large"
+                                    disabled={loading}
+                                    startIcon={loading ? <CircularProgress size={20} /> : <PersonAdd />}
+                                    sx={{
+                                        background: 'linear-gradient(135deg, #d946ef 0%, #0ea5e9 100%)',
+                                        borderRadius: 2,
+                                        py: 1.5,
+                                        textTransform: 'none',
+                                        fontSize: '1rem',
+                                        fontWeight: 600,
+                                        '&:hover': {
+                                            background: 'linear-gradient(135deg, #c026d3 0%, #0284c7 100%)',
+                                        }
+                                    }}
+                                >
+                                    {loading ? 'Creating Account...' : 'Create Account'}
+                                </Button>
+                            </Stack>
                         </form>
 
                         <Divider sx={{ my: 3 }}>
